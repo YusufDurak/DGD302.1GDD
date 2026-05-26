@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excavator Co-op — Final Submission</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #F5C400;
+    --orange: #E8560A;
+    --black: #111010;
+    --dark: #1A1917;
+    --mid: #2A2825;
+    --border: #3A3835;
+    --text: #E8E4DC;
+    --muted: #8A8680;
+    --display: 'Bebas Neue', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --body: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--body);
+    background: var(--black);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  .site-header {
+    background: var(--yellow);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::after {
+    content: 'FINAL';
+    font-family: var(--display);
+    font-size: 180px;
+    color: rgba(0,0,0,0.07);
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -4px;
+  }
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 36px 32px 28px;
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.5);
+    margin-bottom: 10px;
+  }
+  .header-title {
+    font-family: var(--display);
+    font-size: 60px;
+    letter-spacing: 2px;
+    line-height: 0.95;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: rgba(0,0,0,0.55);
+    margin-top: 10px;
+  }
+  .header-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.12);
+    color: rgba(0,0,0,0.65);
+  }
+
+  /* ─── NAV ─────────────────────────────────── */
+  .nav-bar {
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+
+  /* ─── LAYOUT ──────────────────────────────── */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ─── SECTION TITLES ──────────────────────── */
+  .sec-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-number {
+    font-family: var(--display);
+    font-size: 64px;
+    line-height: 1;
+    color: var(--border);
+    flex-shrink: 0;
+    margin-top: -8px;
+  }
+  .sec-info {}
+  .sec-title {
+    font-family: var(--display);
+    font-size: 32px;
+    letter-spacing: 1px;
+    color: var(--yellow);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .sec-desc {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  /* ─── CARDS ───────────────────────────────── */
+  .card {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 10px;
+  }
+  .card-body {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .card-body p + p { margin-top: 10px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  @media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .header-title { font-size: 42px; }
+  }
+
+  /* ─── STATUS TAGS ─────────────────────────── */
+  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+  }
+  .tag-cut { background: rgba(232,86,10,0.15); color: var(--orange); border: 1px solid rgba(232,86,10,0.3); }
+  .tag-kept { background: rgba(245,196,0,0.1); color: var(--yellow); border: 1px solid rgba(245,196,0,0.3); }
+  .tag-evolved { background: rgba(100,200,120,0.1); color: #6DC87A; border: 1px solid rgba(100,200,120,0.3); }
+
+  /* ─── MECHANIC TABLE ──────────────────────── */
+  .mech-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+  .mech-table th {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mech-table td {
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+    vertical-align: top;
+    color: var(--text);
+  }
+  .mech-table tr:last-child td { border-bottom: none; }
+  .mech-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ─── ASSET LIST ──────────────────────────── */
+  .asset-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .asset-row:last-child { border-bottom: none; }
+  .asset-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--mid);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .asset-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .asset-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ─── POST-MORTEM ─────────────────────────── */
+  .pm-block {
+    border-left: 3px solid var(--border);
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    background: var(--dark);
+    border-radius: 0 8px 8px 0;
+  }
+  .pm-block.good { border-left-color: #6DC87A; }
+  .pm-block.bad { border-left-color: var(--orange); }
+  .pm-block.future { border-left-color: var(--yellow); }
+  .pm-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .pm-block.good .pm-label { color: #6DC87A; }
+  .pm-block.bad .pm-label { color: var(--orange); }
+  .pm-block.future .pm-label { color: var(--yellow); }
+  .pm-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .pm-point:last-child { margin-bottom: 0; }
+  .pm-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .pm-block.good .pm-dot { background: #6DC87A; }
+  .pm-block.bad .pm-dot { background: var(--orange); }
+  .pm-block.future .pm-dot { background: var(--yellow); }
+
+  /* ─── ITCH.IO SECTION ─────────────────────── */
+  .itch-preview {
+    background: #1D1B22;
+    border: 1px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    font-family: var(--body);
+  }
+  .itch-header-bar {
+    background: #FA5C5C;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .itch-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .itch-dot:nth-child(1) { background: #FF5F57; }
+  .itch-dot:nth-child(2) { background: #FFBD2E; }
+  .itch-dot:nth-child(3) { background: #28CA41; }
+  .itch-url {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-left: 8px;
+  }
+  .itch-body { padding: 28px 32px; }
+  .itch-game-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .itch-tagline {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+  .itch-cover {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #2A2000 0%, #5C3A00 40%, #1A1A1A 100%);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-size: 48px;
+    letter-spacing: 3px;
+    color: var(--yellow);
+    text-shadow: 0 0 40px rgba(245,196,0,0.4);
+    position: relative;
+    overflow: hidden;
+  }
+  .itch-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(245,196,0,0.03) 30px, rgba(245,196,0,0.03) 31px);
+  }
+  .itch-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #ccc;
+  }
+  .itch-desc p + p { margin-top: 12px; }
+  .itch-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #333;
+  }
+  .itch-tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    background: #2A2830;
+    border-radius: 4px;
+    color: #aaa;
+  }
+
+  /* copy box */
+  .copy-box {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    position: relative;
+  }
+  .copy-box pre {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    color: var(--black);
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+
+  /* divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    margin-top: 28px;
+  }
+  h3:first-of-type { margin-top: 0; }
+
+  .highlight-box {
+    background: rgba(245,196,0,0.06);
+    border: 1px solid rgba(245,196,0,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+
+  /* ─── FOOTER ──────────────────────────────── */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 32px;
+    max-width: 960px;
+    margin: 0 auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="site-header">
+  <div class="header-inner">
+    <div class="header-label">Game Design Document — Final Submission</div>
+    <div class="header-title">EXCAVATOR<br>CO-OP</div>
+    <div class="header-sub">No Name Co-op Excavator Party Game &nbsp;·&nbsp; Unreal Engine &nbsp;·&nbsp; 2-Player Local Co-op</div>
+    <div class="header-badges">
+      <span class="badge">GDD v2.0 — Final</span>
+      <span class="badge">Living Document</span>
+      <span class="badge">Vertical Slice</span>
+      <span class="badge">Spring 2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="show('gdd')">01 · GDD Update</button>
+    <button class="nav-btn" onclick="show('assets')">02 · Asset Pipeline</button>
+    <button class="nav-btn" onclick="show('postmortem')">03 · Post-Mortem</button>
+    <button class="nav-btn" onclick="show('itch')">04 · itch.io Copy</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ══════════════════════════════════════════
+       SECTION 1: GDD UPDATE
+  ═══════════════════════════════════════════ -->
+  <div class="section active" id="gdd">
+
+    <div class="sec-head">
+      <div class="sec-number">01</div>
+      <div class="sec-info">
+        <div class="sec-title">LIVING GDD UPDATE</div>
+        <div class="sec-desc">What changed from the midterm GDD — and why.</div>
+      </div>
+    </div>
+
+    <!-- PIVOT NOTE -->
+    <div class="highlight-box">
+      <strong style="color:var(--yellow);">⚠ Project Pivot Notice</strong><br>
+      The midterm GDD described <strong>Hollow Sprint</strong>, a solo 2D precision-platformer built in Unity. During early production, it became clear that the scope — custom scar/death system, dynamic lighting pipeline, level streaming — was too large for the available time and team. Rather than ship a broken version of Hollow Sprint, we pivoted to the <strong>Excavator Co-op Party Game</strong>, a concept that was already prototyped and demonstrated stronger playtest engagement. This document reflects the final state of that shipped build.
+    </div>
+
+    <h3>Core Concept — What Actually Shipped</h3>
+    <div class="card">
+      <div class="card-label">Game Overview</div>
+      <div class="card-body">
+        <p>A local co-op party game for two players who share a single excavator with an unusual dual-arm design. Players must work together (or hilariously fail together) to navigate a collapsing construction site and get home safe. The game takes place in a near-future world where urban construction has spiraled out of control, leaving workers stranded on unstable scaffold towers with no way down except through.</p>
+        <p>Built in <strong>Unreal Engine</strong>. Published on <strong>itch.io</strong> as a free vertical-slice demo with Steam integration scaffolded for a future commercial release.</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">Player 1 — Driver</div>
+        <div class="card-body">Controls the <strong>left arm</strong> and handles <strong>acceleration</strong>. Responsible for forward motion and balance. Gets blamed first when everything goes wrong.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Player 2 — Steerer</div>
+        <div class="card-body">Controls the <strong>right arm</strong> and handles <strong>steering</strong>. Responsible for direction and grappling. Equally at fault when everything goes wrong.</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <h3>What Was Cut — Scope Reductions</h3>
+
+    <div class="card">
+      <div class="card-label">Mechanics Removed During Production</div>
+      <table class="mech-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Original Plan</th>
+            <th>Why It Was Cut</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>4-Player 2v2 Mode</strong></td>
+            <td>Two excavators, optional sabotage</td>
+            <td>Local 4-player input routing in Unreal took longer than estimated; split-screen camera rig was unstable</td>
+            <td><span class="tag tag-cut">Cut</span></td>
+          </tr>
+          <tr>
+            <td><strong>Swinging Crane Loads</strong></td>
+            <td>Physics grapple targets mid-level</td>
+            <td>Physics constraint jitter was never resolved within the sprint; would have broken pacing</td>
+            <td><span class="tag tag-cut">Cut</span></td>
+          </tr>
+          <tr>
+            <td><strong>Collapsing Concrete Blocks</strong></td>
+            <td>Timed escape sequences</td>
+            <td>Required networked destruction events; out of scope for a local co-op build</td>
+            <td><span class="tag tag-cut">Cut</span></td>
+          </tr>
+          <tr>
+            <td><strong>Steam Achievements</strong></td>
+            <td>Fully implemented achievement list</td>
+            <td>Steam SDK integrated but achievement triggers not wired; deferred to post-launch patch</td>
+            <td><span class="tag tag-cut">Cut</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+    <h3>What Evolved Through Playtesting</h3>
+
+    <div class="card">
+      <div class="card-label">Mechanics That Changed Shape</div>
+      <table class="mech-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Original Design</th>
+            <th>What Actually Happened</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Physics Controls</strong></td>
+            <td>Realistic, simulation-grade arm physics</td>
+            <td>Playtesters found pure simulation frustrating. We added "sticky grab" assist and arm-angle snapping to make failure feel comedic rather than punishing. The sloppiness became a feature.</td>
+            <td><span class="tag tag-evolved">Evolved</span></td>
+          </tr>
+          <tr>
+            <td><strong>Narrow Scaffold Levels</strong></td>
+            <td>Purely about not falling off</td>
+            <td>Playtesters invented their own meta-game of intentionally bumping each other. We added a "nudge" input and made scaffold edges slightly rounded to reward the chaos play style.</td>
+            <td><span class="tag tag-evolved">Evolved</span></td>
+          </tr>
+          <tr>
+            <td><strong>2-Player Co-op</strong></td>
+            <td>Cooperative only</td>
+            <td>Fully shipped as designed. Kept the asymmetric role split (driver/steerer) — this was the single most-praised element in playtest sessions.</td>
+            <td><span class="tag tag-kept">Kept</span></td>
+          </tr>
+          <tr>
+            <td><strong>Steam Integration</strong></td>
+            <td>Full SDK with matchmaking</td>
+            <td>Only overlay and local co-op detection shipped. Online matchmaking was out of scope; presence data is logged but not used.</td>
+            <td><span class="tag tag-evolved">Evolved</span></td>
+          </tr>
+          <tr>
+            <td><strong>Camera System</strong></td>
+            <td>Fixed perspective</td>
+            <td>Evolved into a dynamic spring-arm camera that follows the center-of-mass between both players, with shake on impact. This was not planned but became essential after playtests.</td>
+            <td><span class="tag tag-evolved">Evolved</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+    <h3>Final Core Loop (As Shipped)</h3>
+    <div class="card">
+      <div class="card-label">~5 Minute Experience — Whitebox State</div>
+      <div class="card-body">
+        <p><strong>Main Menu &rarr;</strong> Functional menu with Host and Join buttons. Steam session is created or joined here.</p>
+        <p><strong>Spawn &rarr;</strong> Both players load into a single whitebox level. Controls are discovered through play.</p>
+        <p><strong>Traverse &rarr;</strong> Players navigate the level using the dual-arm physics system. The grab/pull mechanic is partially functional; behavior is inconsistent and remains a known issue.</p>
+        <p><strong>End of Level &rarr;</strong> Players reach the end of the whitebox level in approximately 5 minutes. There is no formal win screen or Game Over state &mdash; the loop does not yet close cleanly.</p>
+      </div>
+    </div>
+    <div class="highlight-box" style="border-color:rgba(232,86,10,0.3); background:rgba(232,86,10,0.06);">
+      <strong style="color:var(--orange);">Known Gap:</strong> The core loop is not fully closed. A Game Over / win state and restart flow were planned but not implemented in this build.
+    </div>
+
+  </div><!-- /gdd -->
+
+
+  <!-- ══════════════════════════════════════════
+       SECTION 2: ASSET PIPELINE
+  ═══════════════════════════════════════════ -->
+  <div class="section" id="assets">
+
+    <div class="sec-head">
+      <div class="sec-number">02</div>
+      <div class="sec-info">
+        <div class="sec-title">ASSET PIPELINE</div>
+        <div class="sec-desc">Final list of 3D models, shaders, and animations in the build.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="border-color:rgba(232,86,10,0.3); background:rgba(232,86,10,0.06);">
+      <strong style="color:var(--orange);">⚠ Whitebox / Pre-Alpha State</strong><br>
+      This vertical slice is in a whitebox state. No final art, shaders, or animations are implemented. The list below reflects what is actually present in the build.
+    </div>
+
+    <h3>Geometry (Whitebox)</h3>
+    <div class="card">
+      <div class="asset-row">
+        <div class="asset-icon">🚧</div>
+        <div><div class="asset-name">Excavator Body</div><div class="asset-meta">Placeholder geometry · Basic static mesh · No final art or textures</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">🦾</div>
+        <div><div class="asset-name">Left Arm + Right Arm</div><div class="asset-meta">Simple collision proxy meshes · Physics constraint attached · Grab mechanic partially functional</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">🏗️</div>
+        <div><div class="asset-name">Level Geometry</div><div class="asset-meta">Hand-placed box meshes · Single whitebox level · ~5 min playthrough to end</div></div>
+      </div>
+    </div>
+
+    <h3>Implemented Systems</h3>
+    <div class="card">
+      <div class="asset-row">
+        <div class="asset-icon">🎮</div>
+        <div><div class="asset-name">Main Menu</div><div class="asset-meta">Functional · Host and Join buttons wired to Steam session</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">🔗</div>
+        <div><div class="asset-name">Steam Integration</div><div class="asset-meta">Host/Join session via Steam Online Subsystem · Basic lobby flow working</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">🦾</div>
+        <div><div class="asset-name">Dual-Arm Physics (Partial)</div><div class="asset-meta">Arm movement functional · Grab/pull force not behaving as intended · Known issue, unresolved</div></div>
+      </div>
+    </div>
+
+    <h3>Not Yet Implemented</h3>
+    <div class="card">
+      <div class="asset-row">
+        <div class="asset-icon">❌</div>
+        <div><div class="asset-name">Game Over / Win Screen</div><div class="asset-meta">Not implemented · Level reaches an end point but has no formal end state</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">❌</div>
+        <div><div class="asset-name">Final Art & Materials</div><div class="asset-meta">All geometry uses default / unlit materials · No textures, shaders, or VFX</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">❌</div>
+        <div><div class="asset-name">Animations</div><div class="asset-meta">No skeletal animations · Arms driven by physics and Blueprint only</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">❌</div>
+        <div><div class="asset-name">Audio</div><div class="asset-meta">No sound design or music implemented</div></div>
+      </div>
+      <div class="asset-row">
+        <div class="asset-icon">❌</div>
+        <div><div class="asset-name">HUD / Pause / Game Over UI</div><div class="asset-meta">No in-game UI beyond the main menu</div></div>
+      </div>
+    </div>
+
+  </div><!-- /assets -->
+
+
+  <!-- ══════════════════════════════════════════
+       SECTION 3: POST-MORTEM
+  ═══════════════════════════════════════════ -->
+  <div class="section" id="postmortem">
+
+    <div class="sec-head">
+      <div class="sec-number">03</div>
+      <div class="sec-info">
+        <div class="sec-title">DEVELOPER POST-MORTEM</div>
+        <div class="sec-desc">A critical reflection on the full development arc — both projects.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      This post-mortem covers both the <strong>abandoned Hollow Sprint</strong> prototype and the <strong>shipped Excavator Co-op</strong> vertical slice. The failure of the first project is as instructive as the success of the second.
+    </div>
+
+    <h3>What Went Right</h3>
+
+    <div class="pm-block good">
+      <div class="pm-label">✓ Successes</div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>The pivot decision itself.</strong> Recognizing that Hollow Sprint's scope was unmanageable early enough to ship something else required real honesty. Most studios sink more time into broken projects out of sunk-cost thinking. Cutting it at the right moment was the most important call made in this production.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Asymmetric controls as a design anchor.</strong> The driver/steerer split gave the game an immediately legible identity. Every playtester understood their role within 30 seconds. Simple asymmetry created complex emergent communication — players started narrating the machine's mood to each other, which was never planned.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Physics-based comedy.</strong> Rather than fight the jank, we leaned into it. The sticky grab assist made the excavator feel lovably incompetent rather than frustrating. This reframe — failure is fun, not punishment — was the most important design insight of the project.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Steam SDK integration.</strong> Getting the Steam overlay functional, even without full achievement wiring, was a technical win. It signals that the build is production-aware even if the feature set is incomplete.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Dynamic camera.</strong> The spring-arm center-of-mass camera emerged from a playtest crash fix and ended up being the most-praised technical element. It was never on any design doc. Happy accidents require a team that notices them.</div></div>
+    </div>
+
+    <h3>What Went Wrong</h3>
+
+    <div class="pm-block bad">
+      <div class="pm-label">✗ Failures & Mistakes</div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Hollow Sprint's scope was never honestly estimated.</strong> The midterm GDD read more like a dream board than a production plan. Dynamic lighting pipelines, procedural scar systems, and mobile-future targets were on the list for a solo developer in a single semester. The GDD had no cut scope, no fallback version, no risk log.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Engine choice mismatch on the first project.</strong> Unity's URP was chosen for Hollow Sprint primarily because it was "industry standard." It was also the engine the team knew least well under time pressure. Unreal — which the team had more reps in — would have been the smarter call from day one.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>4-player mode was promised without a prototype.</strong> The GDD listed 4-player 2v2 as a core mode. It was never prototyped before being written into the design doc. This is a fundamental process error — no feature should be in a GDD that hasn't survived at least a paper test.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Physics constraint jitter was left unresolved too long.</strong> The swinging crane grapple mechanic failed in Unreal due to constraint instability. Two weeks passed before the decision was made to cut it. Earlier escalation would have saved time.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>No UI/UX documentation until late in production.</strong> The main menu, pause screen, and HUD were built reactively rather than from a wireframe. The result is functional but not as readable as it should be. This would have been avoided with a Figma pass at week 2.</div></div>
+    </div>
+
+    <h3>What We Would Do Differently With 6 More Months</h3>
+
+    <div class="pm-block future">
+      <div class="pm-label">→ If We Had More Time</div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Ship 4-player mode — the right way.</strong> The 2v2 sabotage mechanic was genuinely compelling in paper tests. With six months, we would prototype it in week 1, validate the fun, and build the input system from the ground up for 4 players rather than patching a 2-player architecture.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Build a proper level editor or modular level pipeline.</strong> The current scaffold layout is hand-placed. A modular procedural system — even a simple weighted tile-picker — would give infinite replayability and remove the biggest reason to stop playing after the first loop.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Add online co-op.</strong> The Steam SDK is already integrated. Online play would open the game to the largest possible audience and is the most commercially meaningful feature missing from the current build. Six months is enough time to ship a basic P2P connection.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Commission proper audio.</strong> Sound design is placeholder throughout. The physical comedy of the excavator deserves a full Foley pass — the clank of metal on scaffold, the strain of the engine, the comedic silence before a fall. Good audio would double the perceived quality of the build.</div></div>
+      <div class="pm-point"><div class="pm-dot"></div><div><strong>Run structured playtests at every milestone, not just the end.</strong> All the best changes in this project came from watching people play. We didn't start doing this until week 6. If playtesting had started at week 1, the nudge mechanic, the sticky grab, and the camera fix would have shipped in half the time.</div></div>
+    </div>
+
+  </div><!-- /postmortem -->
+
+
+  <!-- ══════════════════════════════════════════
+       SECTION 4: ITCH.IO COPY
+  ═══════════════════════════════════════════ -->
+  <div class="section" id="itch">
+
+    <div class="sec-head">
+      <div class="sec-number">04</div>
+      <div class="sec-info">
+        <div class="sec-title">ITCH.IO STOREFRONT</div>
+        <div class="sec-desc">Preview + ready-to-paste copy for your itch.io page.</div>
+      </div>
+    </div>
+
+    <h3>Page Preview</h3>
+    <div class="itch-preview">
+      <div class="itch-header-bar">
+        <div class="itch-dot"></div>
+        <div class="itch-dot"></div>
+        <div class="itch-dot"></div>
+        <span class="itch-url">yusuf-durak.itch.io/build-together</span>
+      </div>
+      <div class="itch-body">
+        <div class="itch-cover">EXCAVATOR CO-OP</div>
+        <div class="itch-game-title">Excavator Co-op</div>
+        <div class="itch-tagline">Two players. One machine. Zero coordination. Maximum chaos.</div>
+        <div class="itch-desc">
+          <p>You and a friend share one excavator with two arms, two very different jobs, and absolutely no idea what you're doing. One of you drives. One of you steers. Neither of you has done this before.</p>
+          <p>Navigate a crumbling construction scaffold by grappling, swinging, and dragging your overweight machine upward — platform by platform — while trying to convince your co-pilot that whatever just happened was definitely their fault.</p>
+          <p><strong>A local co-op vertical slice built in Unreal Engine.</strong> Grab a friend, a couch, and two controllers.</p>
+        </div>
+        <div class="itch-tags">
+          <span class="itch-tag">Local Co-op</span>
+          <span class="itch-tag">Physics</span>
+          <span class="itch-tag">Party Game</span>
+          <span class="itch-tag">2 Players</span>
+          <span class="itch-tag">Unreal Engine</span>
+          <span class="itch-tag">Couch Co-op</span>
+          <span class="itch-tag">Vertical Slice</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Copy-Paste Description</h3>
+    <div class="copy-box">
+      <button class="copy-btn" onclick="copyText()">Copy</button>
+      <pre id="itch-text">🚧 EXCAVATOR CO-OP — Vertical Slice Demo
+
+Two players. One machine. Zero coordination. Maximum chaos.
+
+You and a friend share one excavator with two arms and two very different jobs. One of you drives. One of you steers. Neither of you has done this before.
+
+Navigate a crumbling construction scaffold by grappling, swinging, and dragging your overweight machine upward — platform by platform — while trying to convince your co-pilot that whatever just happened was definitely their fault.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOW IT WORKS
+
+Player 1 (Driver) — Controls the left arm + acceleration.
+Player 2 (Steerer) — Controls the right arm + steering.
+
+The arms aren't for digging. They're for grabbing onto steel scaffold beams, swinging across gaps, and hauling your enormous machine upward using nothing but physics and communication.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT'S IN THIS BUILD
+
+• 1 whitebox level (~5 min playthrough)
+• Physics-based dual-arm control system (partially functional)
+• Main menu with Host / Join via Steam
+• Steam session integration
+• Gamepad required (2× controllers recommended)
+
+⚠ NOT YET IN THIS BUILD: game over screen, checkpoints, final art, audio, HUD
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ABOUT THIS RELEASE
+
+This is a student vertical slice — a proof of concept, not a finished game. It was built in Unreal Engine as a final project submission. This is an early prototype — the grab mechanic is not fully resolved, and there is no game over screen or audio. What you are playing is the core physics concept in whitebox form. Online multiplayer, additional levels, and 4-player mode are planned if development continues.
+
+If you try it, please leave a rating or comment. Every piece of feedback helps.
+
+Built by Yusuf Durak · https://yusuf-durak.itch.io/build-together</pre>
+    </div>
+
+    <hr class="divider">
+    <h3>Recommended itch.io Settings</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label">Page Settings</div>
+        <div class="card-body" style="font-size:13px; line-height:1.9;">
+          <strong>Kind:</strong> Downloadable<br>
+          <strong>Price:</strong> Free (pay what you want)<br>
+          <strong>Classification:</strong> Games<br>
+          <strong>Genre:</strong> Action<br>
+          <strong>Tags:</strong> local-co-op, physics, party-game, unreal-engine, couch-co-op<br>
+          <strong>Visibility:</strong> Public<br>
+          <strong>Community:</strong> Comments enabled
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Cover Image Tips</div>
+        <div class="card-body" style="font-size:13px; line-height:1.9;">
+          <strong>Size:</strong> 630 × 500 px minimum<br>
+          <strong>Show:</strong> Both players mid-swing, high up on the scaffold — emphasize height and chaos<br>
+          <strong>Text overlay:</strong> Game title + "LOCAL CO-OP" label<br>
+          <strong>GIF tip:</strong> 30-second loop of a near-fall recovery — that's the hook
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /itch -->
+
+</div><!-- /main -->
+
+<div class="site-footer">
+  <span>Excavator Co-op — Final Submission Package</span>
+  <span style="color:var(--border);">GDD v2.0 · Post-Mortem · itch.io</span>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyText() {
+  const text = document.getElementById('itch-text').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>
